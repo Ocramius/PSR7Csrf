@@ -9,6 +9,8 @@ use Psr\Http\Message\RequestInterface;
 
 final class IsSafeHttpRequest implements IsSafeHttpRequestInterface
 {
+    const STRICT_CHECKING = true;
+
     /**
      * @var \string[]
      */
@@ -26,6 +28,6 @@ final class IsSafeHttpRequest implements IsSafeHttpRequestInterface
 
     public function __invoke(RequestInterface $request) : bool
     {
-        return in_array(strtoupper($request->getMethod()), $this->safeMethods, true);
+        return in_array(strtoupper($request->getMethod()), $this->safeMethods, self::STRICT_CHECKING);
     }
 }
