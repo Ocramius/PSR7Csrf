@@ -25,7 +25,27 @@ composer require ocramius/psr7-csrf
 
 ### Usage
 
-TODO
+The simplest usage is based on defaults. It assumes that you have
+a configured PSR-7 compatible application that supports piping
+middlewares, and it also requires you to run [PSR7Session](https://github.com/Ocramius/PSR7Session).
+
+In a [`zendframework/zend-expressive`](https://github.com/zendframework/zend-expressive)
+application, the setup would look like following would look like following:
+
+```php
+$app = \Zend\Expressive\AppFactory::create();
+
+$app->pipe(\PSR7Session\Http\SessionMiddleware::fromSymmetricKeyDefaults(
+    'mBC5v1sOKVvbdEitdSBenu59nfNfhwkedkJVNabosTw=', // replace this with a key of your own (see PSR7Session docs)
+    1200 // 20 minutes session duration
+));
+
+$app->pipe(\PSR7Csrf\Factory::createDefaultCSRFCheckerMiddleware());
+```
+
+This setup will require that any requests that are not `GET`, `HEAD` or
+`OPTIONS` contain a `csrf_token` in the request body parameters (JSON
+or URL-encoded).
 
 ### Examples
 
