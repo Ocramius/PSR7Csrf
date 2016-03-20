@@ -9,6 +9,8 @@ use PSR7Session\Session\SessionInterface;
 
 final class ExtractUniqueKeyFromSession implements ExtractUniqueKeyFromSessionInterface
 {
+    const ENTROPY = 32;
+
     /**
      * @var string
      */
@@ -24,7 +26,7 @@ final class ExtractUniqueKeyFromSession implements ExtractUniqueKeyFromSessionIn
         $uniqueKey = $session->get($this->uniqueIdKey, '');
 
         if ('' === $uniqueKey || ! is_string($uniqueKey)) {
-            $generatedKey = bin2hex(random_bytes(32));
+            $generatedKey = bin2hex(random_bytes(self::ENTROPY));
 
             $session->set($this->uniqueIdKey, $generatedKey);
 
