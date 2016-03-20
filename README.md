@@ -91,13 +91,9 @@ submission form.
 If you try modifying the submitted CSRF token (which is in a hidden
 form field), then the `POST` request will fail.
 
-### Configuration options
-
-Please refer to the [configuration documentation](docs/configuration.md).
-
 ### Known limitations
 
-Please refer to the [limitations documentation](docs/limitations.md).
+Please refer to the [known limitations of PSR7Session](https://github.com/Ocramius/PSR7Session/blob/master/docs/limitations.md).
 
 ### Contributing
 
