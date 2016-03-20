@@ -66,4 +66,30 @@ final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider safeDefaultsMatchingProvider
+     *
+     * @param string $httpMethod
+     * @param bool   $expectedResult
+     */
+    public function testSafeMethodsWithDefaults(string $httpMethod, bool $expectedResult)
+    {
+        /* @var $request RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $request = $this->getMock(RequestInterface::class);
+
+        $request->expects(self::any())->method('getMethod')->willReturn($httpMethod);
+
+        self::assertSame($expectedResult, IsSafeHttpRequest::fromDefaultSafeMethods()->__invoke($request));
+    }
+
+    public function safeDefaultsMatchingProvider() : array
+    {
+        return [
+            'empty' => [
+                '',
+                false,
+            ],
+        ];
+    }
 }
