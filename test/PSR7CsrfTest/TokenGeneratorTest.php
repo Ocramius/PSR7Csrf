@@ -9,9 +9,11 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidExpirationTimeException;
+use PSR7Csrf\Exception\SessionAttributeNotFoundException;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSessionInterface;
 use PSR7Csrf\TokenGenerator;
 use PSR7Session\Session\SessionInterface;
+use stdClass;
 
 /**
  * @covers \PSR7Csrf\TokenGenerator
@@ -75,5 +77,22 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
             [10],
             [100],
         ];
+    }
+
+    public function testWillFailIfTheSessionAttributeIsNotASession()
+    {
+        /* @var $extractUniqueKeyFromSession ExtractUniqueKeyFromSessionInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $extractUniqueKeyFromSession = $this->getMock(ExtractUniqueKeyFromSessionInterface::class);
+        /* @var $request ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $request = $this->getMock(ServerRequestInterface::class);
+        $sessionAttribute = uniqid('session', true);
+
+        $generator = new TokenGenerator(new Sha256(), $extractUniqueKeyFromSession, 10, $sessionAttribute);
+
+        $request->expects(self::any())->method('getAttribute')->with($sessionAttribute)->willReturn(new stdClass());
+
+        $this->expectException(SessionAttributeNotFoundException::class);
+
+        $generator->__invoke($request);
     }
 }
