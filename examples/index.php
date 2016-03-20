@@ -14,8 +14,6 @@ use Zend\Expressive\Application;
 use Zend\Expressive\Router\FastRouteRouter;
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/../src/PSR7Csrf/Factory.php';
-require_once __DIR__ . '/../src/PSR7Csrf/CSRFCheckerMiddleware.php';
 
 $app = new Application(new FastRouteRouter());
 
