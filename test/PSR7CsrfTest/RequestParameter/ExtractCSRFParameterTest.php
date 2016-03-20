@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest\RequestParameter;
 
-use Lcobucci\JWT\Signer;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidRequestParameterNameException;
