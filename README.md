@@ -78,14 +78,18 @@ $app->post('/post', function ($request, $response) {
 
 ### Examples
 
-Simply browse to the `examples` directory in your console, then run
+Browse to the `examples` directory in your console, then run
 
 ```sh
+composer install
 php -S localhost:9999 index.php
 ```
 
-Then try accessing `http://localhost:9999`: you should see a counter
-that increases at every page refresh
+Then try accessing `http://localhost:9999`: you should see a simple
+submission form.
+
+If you try modifying the submitted CSRF token (which is in a hidden
+form field), then the `POST` request will fail.
 
 ### Configuration options
 
