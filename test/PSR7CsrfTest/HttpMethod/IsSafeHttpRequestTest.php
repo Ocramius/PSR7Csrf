@@ -7,9 +7,9 @@ namespace PSR7CsrfTest\HttpMethod;
 use Lcobucci\JWT\Signer;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\RequestInterface;
-use PSR7Csrf\HttpMethod\IsSafeHttpMethod;
+use PSR7Csrf\HttpMethod\IsSafeHttpRequest;
 
-final class IsSafeHttpMethodTest extends PHPUnit_Framework_TestCase
+final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
 {
     public function testSafeMethods(array $safeMethods, string $httpMethod, bool $expectedResult)
     {
@@ -17,7 +17,7 @@ final class IsSafeHttpMethodTest extends PHPUnit_Framework_TestCase
 
         $request->expects(self::any())->method('getMethod')->willReturn($httpMethod);
 
-        self::assertSame($expectedResult, (new IsSafeHttpMethod(...$safeMethods))->__invoke($httpMethod));
+        self::assertSame($expectedResult, (new IsSafeHttpRequest(...$safeMethods))->__invoke($httpMethod));
     }
 
     public function httpMethodsProvider() : array
