@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace PSR7Csrf\RequestParameter;
 
-use Lcobucci\JWT\Signer;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidRequestParameterNameException;
 
-final class ExtractCSRFParameter
+final class ExtractCSRFParameter implements ExtractCSRFParameterInterface
 {
     /**
      * @var string
