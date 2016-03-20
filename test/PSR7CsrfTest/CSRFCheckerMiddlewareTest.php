@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest;
 
+use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use PHPUnit_Framework_TestCase;
@@ -13,6 +14,7 @@ use PSR7Csrf\CSRFCheckerMiddleware;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequestInterface;
 use PSR7Csrf\RequestParameter\ExtractCSRFParameterInterface;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSessionInterface;
+use PSR7Session\Session\SessionInterface;
 use stdClass;
 
 /**
@@ -56,6 +58,16 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
     private $response;
 
     /**
+     * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $session;
+
+    /**
+     * @var string
+     */
+    private $sessionAttribute;
+
+    /**
      * @var callable|\PHPUnit_Framework_MockObject_MockObject
      */
     private $nextMiddleware;
@@ -79,24 +91,27 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->extractCSRFParameter        = $this->getMock(ExtractCSRFParameterInterface::class);
         $this->request                     = $this->getMock(ServerRequestInterface::class);
         $this->response                    = $this->getMock(ResponseInterface::class);
+        $this->session                     = $this->getMock(SessionInterface::class);
+        $this->sessionAttribute            = uniqid('session', true);
         $this->nextMiddleware              = $this->getMock(stdClass::class, ['__invoke']);
         $this->middleware                  = new CSRFCheckerMiddleware(
             $this->isSafeHttpRequest,
             $this->extractUniqueKeyFromSession,
             $this->extractCSRFParameter,
             $this->tokenParser,
-            $this->signer
+            $this->signer,
+            $this->sessionAttribute
         );
     }
 
-    public function testWillIgnoreSafeRequestsWithNoOutMiddleware()
+    public function testWillIgnoreSafeRequestsWithNoNextMiddleware()
     {
         $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(true);
 
         self::assertSame($this->response, $this->middleware->__invoke($this->request, $this->response));
     }
 
-    public function testWillIgnoreSafeRequestsWithOutMiddleware()
+    public function testWillIgnoreSafeRequestsWithoutNextMiddleware()
     {
         $nextReturnValue = $this->getMock(ResponseInterface::class);
 
@@ -106,6 +121,39 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         self::assertSame(
             $nextReturnValue,
             $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware)
+        );
+    }
+
+    public function testWillSucceedIfANonSafeRequestIsProvidedWithAValidTokenWithoutNextMiddleware()
+    {
+        $secret     = uniqid('secret', true);
+        $validToken = (new Builder())
+            ->sign($this->signer, $secret)
+            ->getToken();
+
+        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
+        $this
+            ->extractUniqueKeyFromSession
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->session)
+            ->willReturn($secret);
+        $this
+            ->extractCSRFParameter
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->request)
+            ->willReturn((string) $validToken);
+        $this
+            ->request
+            ->expects(self::any())
+            ->method('getAttribute')
+            ->with($this->sessionAttribute)
+            ->willReturn($this->session);
+
+        self::assertSame(
+            $this->response,
+            $this->middleware->__invoke($this->request, $this->response)
         );
     }
 }
