@@ -68,7 +68,11 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
         $request->expects(self::any())->method('getAttribute')->with($sessionAttribute)->willReturn($session);
         $extractUniqueKeyFromSession->expects(self::any())->method('__invoke')->with($session)->willReturn($secretKey);
 
-        self::assertTrue($generator->__invoke($request)->verify($signer, $secretKey));
+        $token = $generator->__invoke($request);
+
+        self::assertTrue($token->verify($signer, $secretKey));
+        self::assertLessThanOrEqual(time(), $token->getClaim('iat'));
+        self::assertGreaterThan(time(), $token->getClaim('exp'));
     }
 
     public function validExpirationTimeProvider() : array
