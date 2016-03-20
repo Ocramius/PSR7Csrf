@@ -78,7 +78,7 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
             'object with matching non-string parameter' => [
                 'request parameter name',
                 (object) ['request parameter name' => 123],
-                'foo',
+                '',
             ],
             'class with private matching property' => [
                 'field',
