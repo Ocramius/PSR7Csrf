@@ -72,7 +72,7 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         callable $out = null
     ) {
         if ($this->isSafeHttpRequest->__invoke($request)) {
-            return $this->produceSuccessfulResponse($response, $out);
+            return $this->produceSuccessfulResponse($request, $response, $out);
         }
 
         try {
@@ -84,7 +84,7 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
                     $this->extractUniqueKeyFromSession->__invoke($this->getSession($request))
                 )
             ) {
-                return $this->produceSuccessfulResponse($response, $out);
+                return $this->produceSuccessfulResponse($request, $response, $out);
             }
         } catch (BadMethodCallException $invalidToken) {
             return $this->buildFaultyResponse($response);
@@ -106,9 +106,12 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         return $session;
     }
 
-    private function produceSuccessfulResponse(ResponseInterface $response, callable $out = null)
-    {
-        return $out ? $out() : $response;
+    private function produceSuccessfulResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $out = null
+    ) {
+        return $out ? $out($request, $response) : $response;
     }
 
     private function buildFaultyResponse(ResponseInterface $response) : ResponseInterface
