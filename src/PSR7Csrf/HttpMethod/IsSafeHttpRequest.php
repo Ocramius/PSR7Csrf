@@ -19,6 +19,11 @@ final class IsSafeHttpRequest implements IsSafeHttpRequestInterface
         $this->safeMethods = array_map('strtoupper', $safeMethods);
     }
 
+    public static function fromDefaultSafeMethods() : self
+    {
+        return new self('GET', 'HEAD', 'OPTIONS');
+    }
+
     public function __invoke(RequestInterface $request) : bool
     {
         return in_array(strtoupper($request->getMethod()), $this->safeMethods, true);
