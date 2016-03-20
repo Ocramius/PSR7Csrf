@@ -95,4 +95,17 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
 
         self::assertSame($this->response, $this->middleware->__invoke($this->request, $this->response));
     }
+
+    public function testWillIgnoreSafeRequestsWithOutMiddleware()
+    {
+        $nextReturnValue = new stdClass();
+
+        $this->nextMiddleware->expects(self::once())->method('__invoke')->willReturn($nextReturnValue);
+        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(true);
+
+        self::assertSame(
+            $nextReturnValue,
+            $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware)
+        );
+    }
 }
