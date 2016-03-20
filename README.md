@@ -30,7 +30,7 @@ a configured PSR-7 compatible application that supports piping
 middlewares, and it also requires you to run [PSR7Session](https://github.com/Ocramius/PSR7Session).
 
 In a [`zendframework/zend-expressive`](https://github.com/zendframework/zend-expressive)
-application, the setup would look like following would look like following:
+application, the setup would look like the following:
 
 ```php
 $app = \Zend\Expressive\AppFactory::create();
