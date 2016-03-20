@@ -77,6 +77,13 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
                 },
                 '',
             ],
+            'class with protected matching property' => [
+                'field',
+                new class {
+                    private $field = 'bar';
+                },
+                '',
+            ],
         ];
     }
 }
