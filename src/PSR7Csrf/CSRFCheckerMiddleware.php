@@ -78,14 +78,14 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         try {
             $token = $this->tokenParser->parse($this->extractCSRFParameter->__invoke($request));
 
-            if (! (
+            if (
                 $token->validate(new ValidationData())
                 && $token->verify(
                     $this->signer,
                     $this->extractUniqueKeyFromSession->__invoke($this->getSession($request))
-                ))
+                )
             ) {
-                return $this->buildFaultyResponse($response);
+                return $this->produceSuccessfulResponse($response, $out);
             }
         } catch (BadMethodCallException $invalidToken) {
             return $this->buildFaultyResponse($response);
@@ -93,7 +93,7 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
             return $this->buildFaultyResponse($response);
         }
 
-        return $this->produceSuccessfulResponse($response, $out);
+        return $this->buildFaultyResponse($response);
     }
 
     private function getSession(ServerRequestInterface $request) : SessionInterface
