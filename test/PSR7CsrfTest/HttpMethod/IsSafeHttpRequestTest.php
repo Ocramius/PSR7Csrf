@@ -9,6 +9,9 @@ use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\RequestInterface;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequest;
 
+/**
+ * @covers \PSR7Csrf\HttpMethod\IsSafeHttpRequest
+ */
 final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
 {
     /**
