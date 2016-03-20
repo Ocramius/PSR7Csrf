@@ -223,6 +223,38 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
     }
 
+
+    public function testExpiredSignedTokensAreRejected()
+    {
+        $secret          = uniqid('secret', true);
+        $validToken      = (new Builder())
+            ->setExpiration(time() - 3600)
+            ->sign($this->signer, $secret)
+            ->getToken();
+
+        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
+        $this
+            ->extractUniqueKeyFromSession
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->session)
+            ->willReturn($secret);
+        $this
+            ->extractCSRFParameter
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->request)
+            ->willReturn((string) $validToken);
+        $this
+            ->request
+            ->expects(self::any())
+            ->method('getAttribute')
+            ->with($this->sessionAttribute)
+            ->willReturn($this->session);
+
+        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+    }
+
     /**
      * @param CSRFCheckerMiddleware                                      $middleware
      * @param ServerRequestInterface                                     $request
