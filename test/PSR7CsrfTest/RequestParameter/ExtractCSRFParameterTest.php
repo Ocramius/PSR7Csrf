@@ -49,6 +49,11 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
                 null,
                 '',
             ],
+            'empty array' => [
+                'request parameter name',
+                [],
+                '',
+            ],
         ];
     }
 }
