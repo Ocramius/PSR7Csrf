@@ -3,6 +3,7 @@
     <description>code-reviews.io code-style</description>
     <file>./src</file>
     <file>./test</file>
+    <exclude-pattern>./test/PSR7CsrfTest/RequestParameter/ExtractCSRFParameterTest.php</exclude-pattern>
     <rule ref="PSR2">
         <exclude name="Generic.Files.LineLength"/>
     </rule>
