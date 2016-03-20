@@ -57,8 +57,7 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         Parser $tokenParser,
         Signer $signer,
         string $sessionAttribute
-    )
-    {
+    ) {
         $this->isSafeHttpRequest           = $isSafeHttpRequest;
         $this->extractUniqueKeyFromSession = $extractUniqueKeyFromSession;
         $this->extractCSRFParameter        = $extractCSRFParameter;
