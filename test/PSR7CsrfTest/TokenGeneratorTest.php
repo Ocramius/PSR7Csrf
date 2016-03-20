@@ -23,26 +23,34 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider invalidExpirationTimeProvider
      *
-     * @param int $invalidExpirationTime
+     * @param int  $invalidExpirationTime
+     * @param bool $valid
      */
-    public function testWillRejectInvalidExpirationTime(int $invalidExpirationTime)
+    public function testWillRejectInvalidExpirationTime(int $invalidExpirationTime, bool $valid)
     {
         /* @var $signer Signer */
         $signer                      = $this->getMock(Signer::class);
         /* @var $extractUniqueKeyFromSession ExtractUniqueKeyFromSessionInterface */
         $extractUniqueKeyFromSession = $this->getMock(ExtractUniqueKeyFromSessionInterface::class);
 
-        $this->expectException(InvalidExpirationTimeException::class);
+        if (! $valid) {
+            $this->expectException(InvalidExpirationTimeException::class);
+        }
 
-        new TokenGenerator($signer, $extractUniqueKeyFromSession, $invalidExpirationTime, 'session');
+        self::assertInstanceOf(
+            TokenGenerator::class,
+            new TokenGenerator($signer, $extractUniqueKeyFromSession, $invalidExpirationTime, 'session')
+        );
     }
 
     public function invalidExpirationTimeProvider() : array
     {
         return [
-            [0],
-            [-1],
-            [-200],
+            [100, true],
+            [1, true],
+            [0, false],
+            [-1, false],
+            [-200, false],
         ];
     }
 
