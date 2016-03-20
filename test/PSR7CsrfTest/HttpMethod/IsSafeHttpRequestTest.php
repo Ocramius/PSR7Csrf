@@ -46,6 +46,11 @@ final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
                 'PUT',
                 false,
             ],
+            'GET, PUT only, matching method' => [
+                ['GET', 'PUT'],
+                'PUT',
+                true,
+            ],
         ];
     }
 }
