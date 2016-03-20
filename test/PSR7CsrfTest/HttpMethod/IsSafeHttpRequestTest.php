@@ -11,6 +11,13 @@ use PSR7Csrf\HttpMethod\IsSafeHttpRequest;
 
 final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @dataProvider httpMethodsProvider
+     *
+     * @param array  $safeMethods
+     * @param string $httpMethod
+     * @param bool   $expectedResult
+     */
     public function testSafeMethods(array $safeMethods, string $httpMethod, bool $expectedResult)
     {
         /* @var $request RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
