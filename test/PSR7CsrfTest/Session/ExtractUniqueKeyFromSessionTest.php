@@ -31,6 +31,40 @@ final class ExtractUniqueKeyFromSessionTest extends PHPUnit_Framework_TestCase
         self::assertSame($superSecret, (new ExtractUniqueKeyFromSession($key))->__invoke($session));
     }
 
+    /**
+     * @dataProvider keysProvider
+     *
+     * @param string $key
+     */
+    public function testExtractionWithEmptyExistingKey(string $key)
+    {
+        $extractKey = new ExtractUniqueKeyFromSession($key);
+
+        /* @var $session SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $session = $this->getMock(SessionInterface::class);
+
+        $session->expects(self::any())->method('get')->with($key, '')->willReturn('');
+        $session->expects(self::exactly(2))->method('set')->with(
+            $key,
+            self::callback(function (string $secret) {
+                self::assertNotEmpty($secret);
+
+                return true;
+            })
+        );
+
+        $secretUniqueKey = $extractKey->__invoke($session);
+
+        self::assertInternalType('string', $secretUniqueKey);
+        self::assertNotEmpty($secretUniqueKey);
+
+        $anotherSecretKey = $extractKey->__invoke($session);
+
+        self::assertInternalType('string', $anotherSecretKey);
+        self::assertNotEmpty($anotherSecretKey);
+        self::assertNotEquals($secretUniqueKey, $anotherSecretKey);
+    }
+
     public function keysProvider() : array
     {
         return [
