@@ -90,6 +90,7 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
         $generator = new TokenGenerator(new Sha256(), $extractUniqueKeyFromSession, 10, $sessionAttribute);
 
         $request->expects(self::any())->method('getAttribute')->with($sessionAttribute)->willReturn(new stdClass());
+        $request->expects(self::any())->method('getAttributes')->willReturn([]);
 
         $this->expectException(SessionAttributeNotFoundException::class);
 
