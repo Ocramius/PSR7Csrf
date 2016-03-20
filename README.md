@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/Ocramius/PSR7Csrf.svg)](https://travis-ci.org/Ocramius/PSR7Csrf)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Ocramius/PSR7Csrf/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Ocramius/PSR7Csrf/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Ocramius/PSR7Csrf/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Ocramius/PSR7Csrf/?branch=master)
-[![Packagist](https://img.shields.io/packagist/v/ocramius/psr7-csrf.svg)](https://packagist.org/packages/ocramius/psr7-session)
-[![Packagist](https://img.shields.io/packagist/vpre/ocramius/psr7-csrf.svg)](https://packagist.org/packages/ocramius/psr7-session)
+[![Packagist](https://img.shields.io/packagist/v/ocramius/psr7-csrf.svg)](https://packagist.org/packages/ocramius/psr7-csrf)
+[![Packagist](https://img.shields.io/packagist/vpre/ocramius/psr7-csrf.svg)](https://packagist.org/packages/ocramius/psr7-csrf)
 
 **PSR7Csrf** is a [PSR-7](http://www.php-fig.org/psr/psr-7/)
 [middleware](https://mwop.net/blog/2015-01-08-on-http-middleware-and-psr-7.html) that enables
