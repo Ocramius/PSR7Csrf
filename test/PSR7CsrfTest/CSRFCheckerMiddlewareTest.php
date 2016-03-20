@@ -12,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use PSR7Csrf\CSRFCheckerMiddleware;
+use PSR7Csrf\Exception\SessionAttributeNotFoundException;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequestInterface;
 use PSR7Csrf\RequestParameter\ExtractCSRFParameterInterface;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSessionInterface;
@@ -277,6 +278,32 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->willReturn($this->session);
 
         $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+    }
+
+    public function testWillFailIfARequestDoesNotIncludeASession()
+    {
+        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
+        $this
+            ->extractCSRFParameter
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->request)
+            ->willReturn((new Builder())->getToken());
+        $this
+            ->request
+            ->expects(self::any())
+            ->method('getAttribute')
+            ->with($this->sessionAttribute)
+            ->willReturn(new stdClass());
+        $this
+            ->request
+            ->expects(self::any())
+            ->method('getAttributes')
+            ->willReturn([]);
+
+        $this->expectException(SessionAttributeNotFoundException::class);
+
+        $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware);
     }
 
     /**
