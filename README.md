@@ -10,6 +10,13 @@
 [middleware](https://mwop.net/blog/2015-01-08-on-http-middleware-and-psr-7.html) that enables
 [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) protection for PSR-7 based applications.
 
+Instead of storing tokens in the session, PSR7Csrf simply uses JWT tokens,
+which can be verified, signed and have a specific lifetime on their own.
+
+This storage-less approach prevents having to load tokens from a session
+or from a database, and simplifies the entire UI workflow: tokens are
+valid as long as their signature and expiration date holds.
+
 ### Installation
 
 ```sh
