@@ -43,6 +43,7 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
 
     public function requestBodyProvider()
     {
+        /** @noinspection PhpUnusedPrivateFieldInspection */
         return [
             'null body' => [
                 'request parameter name',
@@ -68,6 +69,13 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
                 'request parameter name',
                 (object) ['request parameter name' => 'foo'],
                 'foo',
+            ],
+            'class with private matching property' => [
+                'field',
+                new class {
+                    private $field = 'bar';
+                },
+                '',
             ],
         ];
     }
