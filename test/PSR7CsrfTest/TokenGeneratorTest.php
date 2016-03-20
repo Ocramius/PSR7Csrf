@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest;
 
-use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use PHPUnit_Framework_TestCase;
@@ -67,11 +66,7 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
         $request->expects(self::any())->method('getAttribute')->with($sessionAttribute)->willReturn($session);
         $extractUniqueKeyFromSession->expects(self::any())->method('__invoke')->with($session)->willReturn($secretKey);
 
-        $tokenString = $generator->__invoke($request);
-
-        $token = (new Parser())->parse($tokenString);
-
-        self::assertTrue($token->verify($signer, $secretKey));
+        self::assertTrue($generator->__invoke($request)->verify($signer, $secretKey));
     }
 
     public function validExpirationTimeProvider() : array
