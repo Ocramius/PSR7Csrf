@@ -223,7 +223,6 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
     }
 
-
     public function testExpiredSignedTokensAreRejected()
     {
         $secret          = uniqid('secret', true);
@@ -245,6 +244,31 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->method('__invoke')
             ->with($this->request)
             ->willReturn((string) $validToken);
+        $this
+            ->request
+            ->expects(self::any())
+            ->method('getAttribute')
+            ->with($this->sessionAttribute)
+            ->willReturn($this->session);
+
+        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+    }
+
+    public function testMalformedTokensShouldBeRejected()
+    {
+        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
+        $this
+            ->extractUniqueKeyFromSession
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->session)
+            ->willReturn(uniqid('secret', true));
+        $this
+            ->extractCSRFParameter
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->request)
+            ->willReturn('yadda yadda invalid bs');
         $this
             ->request
             ->expects(self::any())
