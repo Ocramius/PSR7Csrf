@@ -36,7 +36,7 @@ $app->pipeDispatchMiddleware();
 
 $tokenGenerator = Factory::createDefaultTokenGenerator();
 
-$app->get('/get', function ($request, ResponseInterface $response) use ($tokenGenerator) {
+$app->get('/', function ($request, ResponseInterface $response) use ($tokenGenerator) {
     $response
         ->getBody()
         ->write(
