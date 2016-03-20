@@ -6,7 +6,7 @@
         ]
     },
     "logs": {
-        "text": "humbuglog.txt",
-        "json": "humbuglog.json"
+        "text": "humbug-log.txt",
+        "json": "humbug-log.json"
     }
 }
