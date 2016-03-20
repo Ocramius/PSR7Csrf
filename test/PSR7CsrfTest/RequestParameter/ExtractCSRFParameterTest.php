@@ -65,6 +65,11 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
                 ['request parameter name' => 'foo'],
                 'foo',
             ],
+            'array with matching non-string parameter' => [
+                'request parameter name',
+                ['request parameter name' => 123],
+                '',
+            ],
             'object with matching parameter' => [
                 'request parameter name',
                 (object) ['request parameter name' => 'foo'],
