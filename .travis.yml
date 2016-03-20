@@ -5,11 +5,14 @@ php:
   - hhvm
 
 before_script:
-  - composer update --prefer-source
+  - composer update
+  - git clone https://github.com/padraic/humbug.git && cd humbug && composer install
 
 script:
   - ./vendor/bin/phpunit --disallow-test-output --report-useless-tests --coverage-clover ./clover.xml
   - ./vendor/bin/phpcs
+  - ./humbug/bin/humbug
+  - ./build/check-humbug-mutators.php
 
 matrix:
   allow_failures:
