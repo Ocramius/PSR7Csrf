@@ -47,6 +47,35 @@ This setup will require that any requests that are not `GET`, `HEAD` or
 `OPTIONS` contain a `csrf_token` in the request body parameters (JSON
 or URL-encoded).
 
+You can generate the CSRF token for any form like following:
+
+```php
+$tokenGenerator = \PSR7Csrf\Factory::createDefaultTokenGenerator();
+
+$app->get('/get', function ($request, $response) use ($tokenGenerator) {
+    $response
+        ->getBody()
+        ->write(
+            '<form method="post" action="/post">'
+            . '<input type="submit"/>'
+            . '<input type="hidden" name="csrf_token" value="'
+            . $tokenGenerator($request)
+            . '"/>'
+            . '</form>'
+        );
+
+    return $response;
+});
+
+$app->post('/post', function ($request, $response) {
+    $response
+        ->getBody()
+        ->write('It works!');
+
+    return $response;
+});
+```
+
 ### Examples
 
 Simply browse to the `examples` directory in your console, then run
