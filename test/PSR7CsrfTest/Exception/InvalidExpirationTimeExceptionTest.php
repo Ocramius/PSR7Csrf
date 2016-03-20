@@ -15,7 +15,7 @@ use PSR7Csrf\Exception\InvalidExpirationTimeException;
  */
 final class InvalidExpirationTimeExceptionTest extends PHPUnit_Framework_TestCase
 {
-    public function test()
+    public function testFromInvalidExpirationTime()
     {
         $exception = InvalidExpirationTimeException::fromInvalidExpirationTime(-4);
 
