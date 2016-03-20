@@ -10,6 +10,7 @@ use Lcobucci\JWT\Signer;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use PSR7Csrf\CSRFCheckerMiddleware;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequestInterface;
 use PSR7Csrf\RequestParameter\ExtractCSRFParameterInterface;
@@ -190,5 +191,57 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             $nextReturnValue,
             $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware)
         );
+    }
+
+    public function testNonMatchingSignedTokensAreRejected()
+    {
+        $secret          = uniqid('secret', true);
+        $validToken      = (new Builder())
+            ->sign($this->signer, uniqid('wrongSecret', true))
+            ->getToken();
+
+        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
+        $this
+            ->extractUniqueKeyFromSession
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->session)
+            ->willReturn($secret);
+        $this
+            ->extractCSRFParameter
+            ->expects(self::any())
+            ->method('__invoke')
+            ->with($this->request)
+            ->willReturn((string) $validToken);
+        $this
+            ->request
+            ->expects(self::any())
+            ->method('getAttribute')
+            ->with($this->sessionAttribute)
+            ->willReturn($this->session);
+
+        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+    }
+
+    /**
+     * @param CSRFCheckerMiddleware                                      $middleware
+     * @param ServerRequestInterface                                     $request
+     * @param ResponseInterface|\PHPUnit_Framework_MockObject_MockObject $response
+     *
+     * @return void
+     */
+    private function assertFaultyResponse(
+        CSRFCheckerMiddleware $middleware,
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) {
+        $faultyResponse = $this->getMock(ResponseInterface::class);
+        $responseBody   = $this->getMock(StreamInterface::class);
+
+        $response->expects(self::any())->method('withStatus')->with(400)->willReturn($faultyResponse);
+        $faultyResponse->expects(self::any())->method('getBody')->willReturn($responseBody);
+        $responseBody->expects(self::once())->method('write')->with('{"error":"missing or invalid CSRF token"}');
+
+        self::assertSame($faultyResponse, $middleware->__invoke($request, $response));
     }
 }
