@@ -138,6 +138,14 @@ final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
                 'put',
                 false,
             ],
+            'UNKNOWN' => [
+                'UNKNOWN',
+                false,
+            ],
+            'unknown' => [
+                'unknown',
+                false,
+            ],
         ];
     }
 }
