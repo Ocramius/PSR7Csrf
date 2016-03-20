@@ -9,6 +9,7 @@ use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Token;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidExpirationTimeException;
+use PSR7Csrf\Exception\SessionAttributeNotFoundException;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSessionInterface;
 use PSR7Session\Session\SessionInterface;
 
@@ -63,7 +64,7 @@ final class TokenGenerator implements TokenGeneratorInterface
         $session = $request->getAttribute($this->sessionAttribute);
 
         if (! $session instanceof SessionInterface) {
-            throw new \RuntimeException('Session not found');
+            throw SessionAttributeNotFoundException::fromAttributeNameAndRequest($this->sessionAttribute, $request);
         }
 
         $timestamp = (new \DateTime())->getTimestamp();
