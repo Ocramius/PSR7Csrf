@@ -78,8 +78,7 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         try {
             $token = $this->tokenParser->parse($this->extractCSRFParameter->__invoke($request));
 
-            if (
-                $token->validate(new ValidationData())
+            if ($token->validate(new ValidationData())
                 && $token->verify(
                     $this->signer,
                     $this->extractUniqueKeyFromSession->__invoke($this->getSession($request))
