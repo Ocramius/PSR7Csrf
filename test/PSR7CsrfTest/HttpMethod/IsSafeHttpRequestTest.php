@@ -114,6 +114,30 @@ final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
                 'options',
                 true,
             ],
+            'DELETE' => [
+                'DELETE',
+                false,
+            ],
+            'delete' => [
+                'delete',
+                false,
+            ],
+            'POST' => [
+                'POST',
+                false,
+            ],
+            'post' => [
+                'post',
+                false,
+            ],
+            'PUT' => [
+                'PUT',
+                false,
+            ],
+            'put' => [
+                'put',
+                false,
+            ],
         ];
     }
 }
