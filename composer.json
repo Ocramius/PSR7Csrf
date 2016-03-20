@@ -1,5 +1,5 @@
 {
-    "name":     "ocramius/psr7-session",
+    "name":     "ocramius/psr7-csrf",
     "license":  "MIT",
     "authors": [
         {
@@ -7,15 +7,6 @@
             "email":    "ocramius@gmail.com",
             "homepage": "http://ocramius.github.io/",
             "role":     "Developer"
-        },
-        {
-            "name":  "Jefersson Nathan",
-            "email": "malukenho@phpse.net"
-        },
-        {
-            "name":  "Luís Otávio Cobucci Oblonczyk",
-            "email": "lcobucci@gmail.com",
-            "role":  "Developer"
         }
     ],
     "require": {
@@ -23,20 +14,19 @@
         "psr/http-message":                "^1.0",
         "lcobucci/jwt":                    "^3.1",
         "zendframework/zend-stratigility": "^1.1",
-        "dflydev/fig-cookies":             "^1.0"
+        "ocramius/psr7-session":           "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit":              "^5.0",
-        "zendframework/zend-diactoros": "^1.1"
+        "phpunit/phpunit": "^5.0"
     },
     "autoload": {
         "psr-4": {
-            "PSR7Session\\": "src/PSR7Session"
+            "PSR7Csrf\\": "src/PSR7Csrf"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PSR7SessionTest\\": "test/PSR7SessionTest"
+            "PSR7CsrfTest\\": "test/PSR7CsrfTest"
         }
     },
     "extra": {
