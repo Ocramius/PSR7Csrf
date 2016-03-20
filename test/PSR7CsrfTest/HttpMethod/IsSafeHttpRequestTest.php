@@ -13,11 +13,12 @@ final class IsSafeHttpRequestTest extends PHPUnit_Framework_TestCase
 {
     public function testSafeMethods(array $safeMethods, string $httpMethod, bool $expectedResult)
     {
+        /* @var $request RequestInterface|\PHPUnit_Framework_MockObject_MockObject */
         $request = $this->getMock(RequestInterface::class);
 
         $request->expects(self::any())->method('getMethod')->willReturn($httpMethod);
 
-        self::assertSame($expectedResult, (new IsSafeHttpRequest(...$safeMethods))->__invoke($httpMethod));
+        self::assertSame($expectedResult, (new IsSafeHttpRequest(...$safeMethods))->__invoke($request));
     }
 
     public function httpMethodsProvider() : array
