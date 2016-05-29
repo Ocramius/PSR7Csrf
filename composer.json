@@ -13,7 +13,7 @@
         "php":                             "~7.0",
         "psr/http-message":                "^1.0",
         "lcobucci/jwt":                    "^3.1",
-        "zendframework/zend-stratigility": "^1.1",
+        "zendframework/zend-stratigility": "^1.2.1",
         "ocramius/psr7-session":           "^1.0 || ^2.0"
     },
     "require-dev": {
