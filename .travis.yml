@@ -6,6 +6,7 @@ php:
 
 before_script:
   - composer update
+  - if [ "$DEPENDENCIES" = 'low' ] ; then composer update --prefer-source --prefer-lowest --prefer-stable; fi
   - git clone https://github.com/padraic/humbug.git && cd humbug && composer install && cd ..
 
 script:
@@ -13,6 +14,11 @@ script:
   - ./vendor/bin/phpcs
   - ./humbug/bin/humbug
   - ./build/check-humbug-mutators.php
+
+env:
+  matrix:
+    - DEPENDENCIES="high"
+    - DEPENDENCIES="low"
 
 matrix:
   allow_failures:

@@ -12,13 +12,13 @@
     "require": {
         "php":                             "~7.0",
         "psr/http-message":                "^1.0",
-        "lcobucci/jwt":                    "^3.1",
-        "zendframework/zend-stratigility": "^1.1",
-        "ocramius/psr7-session":           "^1.0"
+        "lcobucci/jwt":                    "^3.1.1",
+        "zendframework/zend-stratigility": "^1.2.1",
+        "ocramius/psr7-session":           "^1.0.2 || ^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit":           "^5.2",
-        "squizlabs/php_codesniffer": "^2.5.1"
+        "phpunit/phpunit":           "^5.3.4",
+        "squizlabs/php_codesniffer": "^2.6.0"
     },
     "autoload": {
         "psr-4": {
