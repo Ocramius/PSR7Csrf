@@ -29,9 +29,9 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
     public function testWillRejectInvalidExpirationTime(int $invalidExpirationTime, bool $valid)
     {
         /* @var $signer Signer */
-        $signer                      = $this->getMock(Signer::class);
+        $signer                      = $this->createMock(Signer::class);
         /* @var $extractUniqueKeyFromSession ExtractUniqueKeyFromSessionInterface */
-        $extractUniqueKeyFromSession = $this->getMock(ExtractUniqueKeyFromSessionInterface::class);
+        $extractUniqueKeyFromSession = $this->createMock(ExtractUniqueKeyFromSessionInterface::class);
 
         if (! $valid) {
             $this->expectException(InvalidExpirationTimeException::class);
@@ -63,11 +63,11 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
     {
         $signer = new Sha256();
         /* @var $extractUniqueKeyFromSession ExtractUniqueKeyFromSessionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $extractUniqueKeyFromSession = $this->getMock(ExtractUniqueKeyFromSessionInterface::class);
+        $extractUniqueKeyFromSession = $this->createMock(ExtractUniqueKeyFromSessionInterface::class);
         /* @var $session SessionInterface */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         /* @var $request ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $sessionAttribute = uniqid('session', true);
 
         $generator = new TokenGenerator($signer, $extractUniqueKeyFromSession, $validExpirationTime, $sessionAttribute);
@@ -94,9 +94,9 @@ final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
     public function testWillFailIfTheSessionAttributeIsNotASession()
     {
         /* @var $extractUniqueKeyFromSession ExtractUniqueKeyFromSessionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $extractUniqueKeyFromSession = $this->getMock(ExtractUniqueKeyFromSessionInterface::class);
+        $extractUniqueKeyFromSession = $this->createMock(ExtractUniqueKeyFromSessionInterface::class);
         /* @var $request ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $sessionAttribute = uniqid('session', true);
 
         $generator = new TokenGenerator(new Sha256(), $extractUniqueKeyFromSession, 10, $sessionAttribute);

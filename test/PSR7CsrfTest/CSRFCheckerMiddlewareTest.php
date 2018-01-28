@@ -93,15 +93,15 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
 
         $this->signer                      = new Signer\Hmac\Sha256();
         $this->tokenParser                 = new Parser();
-        $this->isSafeHttpRequest           = $this->getMock(IsSafeHttpRequestInterface::class);
-        $this->extractUniqueKeyFromSession = $this->getMock(ExtractUniqueKeyFromSessionInterface::class);
-        $this->extractCSRFParameter        = $this->getMock(ExtractCSRFParameterInterface::class);
-        $this->request                     = $this->getMock(ServerRequestInterface::class);
-        $this->response                    = $this->getMock(ResponseInterface::class);
-        $this->session                     = $this->getMock(SessionInterface::class);
+        $this->isSafeHttpRequest           = $this->createMock(IsSafeHttpRequestInterface::class);
+        $this->extractUniqueKeyFromSession = $this->createMock(ExtractUniqueKeyFromSessionInterface::class);
+        $this->extractCSRFParameter        = $this->createMock(ExtractCSRFParameterInterface::class);
+        $this->request                     = $this->createMock(ServerRequestInterface::class);
+        $this->response                    = $this->createMock(ResponseInterface::class);
+        $this->session                     = $this->createMock(SessionInterface::class);
         $this->sessionAttribute            = uniqid('session', true);
-        $this->nextMiddleware              = $this->getMock(RequestHandlerInterface::class);
-        $this->faultyResponse              = $this->getMock(ResponseInterface::class);
+        $this->nextMiddleware              = $this->createMock(RequestHandlerInterface::class);
+        $this->faultyResponse              = $this->createMock(ResponseInterface::class);
         $this->middleware                  = new CSRFCheckerMiddleware(
             $this->isSafeHttpRequest,
             $this->extractUniqueKeyFromSession,
@@ -129,7 +129,6 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
 
     public function testWillSucceedIfANonSafeRequestIsProvidedWithAValidTokenWithNextMiddleware()
     {
-        $nextReturnValue = $this->getMock(ResponseInterface::class);
         $secret          = uniqid('secret', true);
         $validToken      = (new Builder())
             ->sign($this->signer, $secret)
@@ -140,7 +139,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->expects(self::once())
             ->method('handle')
             ->with($this->request)
-            ->willReturn($nextReturnValue);
+            ->willReturn($this->response);
         $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
         $this
             ->extractUniqueKeyFromSession
@@ -162,7 +161,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->willReturn($this->session);
 
         self::assertSame(
-            $nextReturnValue,
+            $this->response,
             $this->middleware->process($this->request, $this->nextMiddleware)
         );
     }

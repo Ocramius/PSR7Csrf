@@ -22,7 +22,7 @@ final class ExtractUniqueKeyFromSessionTest extends PHPUnit_Framework_TestCase
     public function testExtractionWithExistingKey(string $key)
     {
         /* @var $session SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $session     = $this->getMock(SessionInterface::class);
+        $session     = $this->createMock(SessionInterface::class);
         $superSecret = uniqid('', true);
 
         $session->expects(self::any())->method('get')->with($key, '')->willReturn($superSecret);
@@ -41,7 +41,7 @@ final class ExtractUniqueKeyFromSessionTest extends PHPUnit_Framework_TestCase
         $extractKey = new ExtractUniqueKeyFromSession($key);
 
         /* @var $session SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $session->expects(self::any())->method('get')->with($key, '')->willReturn('');
         $session->expects(self::exactly(2))->method('set')->with(
@@ -75,7 +75,7 @@ final class ExtractUniqueKeyFromSessionTest extends PHPUnit_Framework_TestCase
         $extractKey = new ExtractUniqueKeyFromSession($key);
 
         /* @var $session SessionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $session->expects(self::any())->method('get')->with($key, '')->willReturn(123);
         $session->expects(self::exactly(2))->method('set')->with(

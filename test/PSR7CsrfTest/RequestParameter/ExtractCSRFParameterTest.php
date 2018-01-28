@@ -33,7 +33,7 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
     public function testExtraction(string $requestParameter, $body, string $expectedExtractedValue)
     {
         /* @var $request ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
 
         $request->expects(self::any())->method('getParsedBody')->willReturn($body);
 

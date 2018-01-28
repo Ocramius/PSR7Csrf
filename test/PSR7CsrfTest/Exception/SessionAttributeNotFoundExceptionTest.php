@@ -18,7 +18,7 @@ final class SessionAttributeNotFoundExceptionTest extends PHPUnit_Framework_Test
     public function testFromInvalidExpirationTime()
     {
         /* @var $request ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
 
         $request->expects(self::any())->method('getAttributes')->willReturn(['foo' => 'bar', 'baz' => 'tab']);
 
