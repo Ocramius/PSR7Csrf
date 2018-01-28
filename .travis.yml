@@ -15,7 +15,7 @@ script:
   - ./vendor/bin/phpunit $PHPUNIT_FLAGS
   - ./vendor/bin/phpcs
   - ./humbug/bin/humbug
-  - if php -i |grep -qE xdebug; then ./vendor/bin/humbug; fi
+  - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then ./vendor/bin/humbug; fi
   - cd examples
   - composer install
   - php index.php > /dev/null
