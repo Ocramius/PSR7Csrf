@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest\HttpMethod;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSession;
 use PSR7Sessions\Storageless\Session\SessionInterface;
 
 /**
  * @covers \PSR7Csrf\Session\ExtractUniqueKeyFromSession
  */
-final class ExtractUniqueKeyFromSessionTest extends PHPUnit_Framework_TestCase
+final class ExtractUniqueKeyFromSessionTest extends TestCase
 {
     /**
      * @dataProvider keysProvider

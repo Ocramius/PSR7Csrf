@@ -7,7 +7,7 @@ namespace PSR7CsrfTest;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -22,7 +22,7 @@ use stdClass;
 /**
  * @covers \PSR7Csrf\CSRFCheckerMiddleware
  */
-final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
+final class CSRFCheckerMiddlewareTest extends TestCase
 {
     /**
      * @var Signer

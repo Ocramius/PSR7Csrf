@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest\Exception;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\ExceptionInterface;
 use PSR7Csrf\Exception\SessionAttributeNotFoundException;
@@ -13,7 +13,7 @@ use UnexpectedValueException;
 /**
  * @covers \PSR7Csrf\Exception\SessionAttributeNotFoundException
  */
-final class SessionAttributeNotFoundExceptionTest extends PHPUnit_Framework_TestCase
+final class SessionAttributeNotFoundExceptionTest extends TestCase
 {
     public function testFromInvalidExpirationTime()
     {

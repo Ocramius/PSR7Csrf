@@ -6,7 +6,7 @@ namespace PSR7CsrfTest;
 
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidExpirationTimeException;
 use PSR7Csrf\Exception\SessionAttributeNotFoundException;
@@ -18,7 +18,7 @@ use stdClass;
 /**
  * @covers \PSR7Csrf\TokenGenerator
  */
-final class TokenGeneratorTest extends PHPUnit_Framework_TestCase
+final class TokenGeneratorTest extends TestCase
 {
     /**
      * @dataProvider invalidExpirationTimeProvider

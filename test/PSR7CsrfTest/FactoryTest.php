@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -15,7 +15,7 @@ use PSR7Csrf\TokenGeneratorInterface;
 /**
  * @covers \PSR7Csrf\Factory
  */
-final class FactoryTest extends PHPUnit_Framework_TestCase
+final class FactoryTest extends TestCase
 {
     public function testCreateDefaultCSRFCheckerMiddleware()
     {
