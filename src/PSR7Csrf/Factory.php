@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequest;
 use PSR7Csrf\RequestParameter\ExtractCSRFParameter;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSession;
-use PSR7Session\Http\SessionMiddleware;
+use PSR7Sessions\Storageless\Http\SessionMiddleware;
 
 final class Factory
 {

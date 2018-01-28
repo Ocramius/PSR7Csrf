@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest\HttpMethod;
 
-use Lcobucci\JWT\Signer;
 use PHPUnit_Framework_TestCase;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSession;
-use PSR7Session\Session\SessionInterface;
+use PSR7Sessions\Storageless\Session\SessionInterface;
 
 /**
  * @covers \PSR7Csrf\Session\ExtractUniqueKeyFromSession
