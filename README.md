@@ -95,6 +95,10 @@ form field), then the `POST` request will fail.
 
 Please refer to the [known limitations of PSR7Session](https://github.com/Ocramius/PSR7Session/blob/master/docs/limitations.md).
 
+Also, this component does *NOT* prevent double-form-submissions: it
+merely prevents CSRF attacks from third parties. As long as the CSRF
+token is valid, it can be reused over multiple requests.
+
 ### Contributing
 
 Please refer to the [contributing notes](CONTRIBUTING.md).
