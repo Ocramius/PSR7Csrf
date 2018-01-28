@@ -1,7 +1,6 @@
 {
     "require": {
-        "zendframework/zend-expressive": "^1.0",
-        "zendframework/zend-expressive-fastroute": "^1.0"
+        "zendframework/zend-diactoros": "^1.7.0"
     },
     "autoload": {
         "files": [
