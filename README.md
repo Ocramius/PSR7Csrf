@@ -78,9 +78,9 @@ $app->post('/post', function ($request, $response) {
 
 ### Examples
 
-Browse to the `examples` directory in your console, then run
-
 ```sh
+composer install # install at the root of this package first!
+cd examples
 composer install
 php -S localhost:9999 index.php
 ```
