@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace PSR7CsrfTest\Exception;
 
 use InvalidArgumentException;
-use Lcobucci\JWT\Signer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PSR7Csrf\Exception\ExceptionInterface;
 use PSR7Csrf\Exception\InvalidExpirationTimeException;
 
 /**
  * @covers \PSR7Csrf\Exception\InvalidExpirationTimeException
  */
-final class InvalidExpirationTimeExceptionTest extends PHPUnit_Framework_TestCase
+final class InvalidExpirationTimeExceptionTest extends TestCase
 {
     public function testFromInvalidExpirationTime()
     {

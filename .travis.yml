@@ -1,8 +1,9 @@
 language: php
 
 php:
-  - 7
-  - hhvm
+  - 7.1
+  - 7.2
+  - nightly
 
 before_script:
   - composer update
@@ -10,10 +11,13 @@ before_script:
   - git clone https://github.com/padraic/humbug.git && cd humbug && composer install && cd ..
 
 script:
-  - ./vendor/bin/phpunit --disallow-test-output --report-useless-tests --coverage-clover ./clover.xml
+  - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then PHPUNIT_FLAGS="--coverage-clover ./clover.xml"; else PHPUNIT_FLAGS=""; fi
+  - ./vendor/bin/phpunit $PHPUNIT_FLAGS
   - ./vendor/bin/phpcs
-  - ./humbug/bin/humbug
-  - ./build/check-humbug-mutators.php
+  - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then ./vendor/bin/humbug; fi
+  - cd examples
+  - composer install
+  - php index.php > /dev/null
 
 env:
   matrix:
@@ -26,4 +30,4 @@ matrix:
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover ./clover.xml
+  - if [ -f clover.xml ]; then php ocular.phar code-coverage:upload --format=php-clover ./clover.xml; fi

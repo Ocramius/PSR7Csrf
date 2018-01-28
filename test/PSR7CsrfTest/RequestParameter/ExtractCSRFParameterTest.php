@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PSR7CsrfTest\RequestParameter;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidRequestParameterNameException;
 use PSR7Csrf\RequestParameter\ExtractCSRFParameter;
@@ -12,7 +12,7 @@ use PSR7Csrf\RequestParameter\ExtractCSRFParameter;
 /**
  * @covers \PSR7Csrf\RequestParameter\ExtractCSRFParameter
  */
-final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
+final class ExtractCSRFParameterTest extends TestCase
 {
     public function testRejectsEmptyRequestParameterName()
     {
@@ -33,7 +33,7 @@ final class ExtractCSRFParameterTest extends PHPUnit_Framework_TestCase
     public function testExtraction(string $requestParameter, $body, string $expectedExtractedValue)
     {
         /* @var $request ServerRequestInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
 
         $request->expects(self::any())->method('getParsedBody')->willReturn($body);
 

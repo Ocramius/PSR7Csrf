@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="./vendor/autoload.php"
     colors="true"
     convertErrorsToExceptions="true"
@@ -9,7 +11,11 @@
     stopOnFailure="false"
     processIsolation="false"
     backupGlobals="false"
-    syntaxCheck="true"
+    beStrictAboutChangesToGlobalState="true"
+    beStrictAboutOutputDuringTests="true"
+    beStrictAboutResourceUsageDuringSmallTests="true"
+    beStrictAboutTodoAnnotatedTests="true"
+    beStrictAboutTestsThatDoNotTestAnything="true"
 >
     <testsuite name="PSR7Csrf tests">
         <directory>./test/PSR7CsrfTest</directory>

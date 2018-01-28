@@ -78,9 +78,9 @@ $app->post('/post', function ($request, $response) {
 
 ### Examples
 
-Browse to the `examples` directory in your console, then run
-
 ```sh
+composer install # install at the root of this package first!
+cd examples
 composer install
 php -S localhost:9999 index.php
 ```
@@ -94,6 +94,10 @@ form field), then the `POST` request will fail.
 ### Known limitations
 
 Please refer to the [known limitations of PSR7Session](https://github.com/Ocramius/PSR7Session/blob/master/docs/limitations.md).
+
+Also, this component does *NOT* prevent double-form-submissions: it
+merely prevents CSRF attacks from third parties. As long as the CSRF
+token is valid, it can be reused over multiple requests.
 
 ### Contributing
 

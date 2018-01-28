@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PSR7Csrf\Exception\InvalidExpirationTimeException;
 use PSR7Csrf\Exception\SessionAttributeNotFoundException;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSessionInterface;
-use PSR7Session\Session\SessionInterface;
+use PSR7Sessions\Storageless\Session\SessionInterface;
 
 final class TokenGenerator implements TokenGeneratorInterface
 {

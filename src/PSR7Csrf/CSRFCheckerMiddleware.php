@@ -11,14 +11,14 @@ use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\ValidationData;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use PSR7Csrf\Exception\SessionAttributeNotFoundException;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequestInterface;
 use PSR7Csrf\RequestParameter\ExtractCSRFParameterInterface;
 use PSR7Csrf\Session\ExtractUniqueKeyFromSessionInterface;
-use PSR7Session\Session\SessionInterface;
-use Zend\Stratigility\MiddlewareInterface;
+use PSR7Sessions\Storageless\Session\SessionInterface;
 
-final class CSRFCheckerMiddleware implements MiddlewareInterface
+final class CSRFCheckerMiddleware implements \Psr\Http\Server\MiddlewareInterface
 {
     /**
      * @var Signer
@@ -50,13 +50,19 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
      */
     private $sessionAttribute;
 
+    /**
+     * @var ResponseInterface
+     */
+    private $faultyResponse;
+
     public function __construct(
         IsSafeHttpRequestInterface $isSafeHttpRequest,
         ExtractUniqueKeyFromSessionInterface $extractUniqueKeyFromSession,
         ExtractCSRFParameterInterface $extractCSRFParameter,
         Parser $tokenParser,
         Signer $signer,
-        string $sessionAttribute
+        string $sessionAttribute,
+        ResponseInterface $faultyResponse
     ) {
         $this->isSafeHttpRequest           = $isSafeHttpRequest;
         $this->extractUniqueKeyFromSession = $extractUniqueKeyFromSession;
@@ -64,15 +70,15 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         $this->tokenParser                 = $tokenParser;
         $this->signer                      = $signer;
         $this->sessionAttribute            = $sessionAttribute;
+        $this->faultyResponse              = $faultyResponse;
     }
 
-    public function __invoke(
+    public function process(
         ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $out = null
-    ) {
+        RequestHandlerInterface $handler
+    ) : ResponseInterface {
         if ($this->isSafeHttpRequest->__invoke($request)) {
-            return $this->produceSuccessfulResponse($request, $response, $out);
+            return $handler->handle($request);
         }
 
         try {
@@ -84,15 +90,15 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
                     $this->extractUniqueKeyFromSession->__invoke($this->getSession($request))
                 )
             ) {
-                return $this->produceSuccessfulResponse($request, $response, $out);
+                return $handler->handle($request);
             }
         } catch (BadMethodCallException $invalidToken) {
-            return $this->buildFaultyResponse($response);
+            return $this->faultyResponse;
         } catch (InvalidArgumentException $invalidToken) {
-            return $this->buildFaultyResponse($response);
+            return $this->faultyResponse;
         }
 
-        return $this->buildFaultyResponse($response);
+        return $this->faultyResponse;
     }
 
     private function getSession(ServerRequestInterface $request) : SessionInterface
@@ -104,22 +110,5 @@ final class CSRFCheckerMiddleware implements MiddlewareInterface
         }
 
         return $session;
-    }
-
-    private function produceSuccessfulResponse(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $out = null
-    ) {
-        return $out ? $out($request, $response) : $response;
-    }
-
-    private function buildFaultyResponse(ResponseInterface $response) : ResponseInterface
-    {
-        $faultyResponse = $response->withStatus(400);
-
-        $faultyResponse->getBody()->write('{"error":"missing or invalid CSRF token"}');
-
-        return $faultyResponse;
     }
 }
