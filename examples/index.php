@@ -113,8 +113,6 @@ $pipe = new class ($action, $sessionMiddleware, $csrfMiddleware) implements Requ
             return $this->action->handle($request);
         }
 
-        $middleware = \reset($this->pipedMiddleware);
-
         return $this->pipedMiddleware[0]->process(
             $request,
             new self($this->action, ...\array_values(\array_slice($this->pipedMiddleware, 1)))
