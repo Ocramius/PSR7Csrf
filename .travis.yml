@@ -14,6 +14,9 @@ script:
   - ./vendor/bin/phpcs
   - ./humbug/bin/humbug
   - ./build/check-humbug-mutators.php
+  - cd examples
+  - composer install
+  - php index.php > /dev/null
 
 env:
   matrix:
