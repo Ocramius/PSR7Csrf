@@ -11,6 +11,7 @@ use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use PSR7Csrf\CSRFCheckerMiddleware;
 use PSR7Csrf\Exception\SessionAttributeNotFoundException;
 use PSR7Csrf\HttpMethod\IsSafeHttpRequestInterface;
@@ -70,7 +71,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
     private $sessionAttribute;
 
     /**
-     * @var callable|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $nextMiddleware;
 
@@ -78,6 +79,16 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
      * @var CSRFCheckerMiddleware
      */
     private $middleware;
+
+    /**
+     * @var ResponseInterface
+     */
+    private $faultyResponseTemplate;
+
+    /**
+     * @var ResponseInterface
+     */
+    private $faultyResponse;
 
     /**
      * {@inheritDoc}
@@ -95,73 +106,39 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->response                    = $this->getMock(ResponseInterface::class);
         $this->session                     = $this->getMock(SessionInterface::class);
         $this->sessionAttribute            = uniqid('session', true);
-        $this->nextMiddleware              = $this->getMock(stdClass::class, ['__invoke']);
+        $this->nextMiddleware              = $this->getMock(RequestHandlerInterface::class);
+        $this->faultyResponseTemplate      = $this->getMock(ResponseInterface::class);
+        $this->faultyResponse              = $this->getMock(ResponseInterface::class);
         $this->middleware                  = new CSRFCheckerMiddleware(
             $this->isSafeHttpRequest,
             $this->extractUniqueKeyFromSession,
             $this->extractCSRFParameter,
             $this->tokenParser,
             $this->signer,
-            $this->sessionAttribute
+            $this->sessionAttribute,
+            $this->faultyResponseTemplate
         );
+
+        $this
+            ->faultyResponseTemplate
+            ->expects(self::any())
+            ->method('withStatus')
+            ->with(401)
+            ->willReturn($this->faultyResponse);
     }
 
     public function testWillIgnoreSafeRequestsWithNoNextMiddleware()
     {
         $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(true);
 
-        self::assertSame($this->response, $this->middleware->__invoke($this->request, $this->response));
-    }
-
-    public function testWillIgnoreSafeRequestsWithoutNextMiddleware()
-    {
-        $nextReturnValue = $this->getMock(ResponseInterface::class);
-
         $this
             ->nextMiddleware
             ->expects(self::once())
-            ->method('__invoke')
-            ->with($this->request, $this->response)
-            ->willReturn($nextReturnValue);
-        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(true);
-
-        self::assertSame(
-            $nextReturnValue,
-            $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware)
-        );
-    }
-
-    public function testWillSucceedIfANonSafeRequestIsProvidedWithAValidTokenWithoutNextMiddleware()
-    {
-        $secret     = uniqid('secret', true);
-        $validToken = (new Builder())
-            ->sign($this->signer, $secret)
-            ->getToken();
-
-        $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
-        $this
-            ->extractUniqueKeyFromSession
-            ->expects(self::any())
-            ->method('__invoke')
-            ->with($this->session)
-            ->willReturn($secret);
-        $this
-            ->extractCSRFParameter
-            ->expects(self::any())
-            ->method('__invoke')
+            ->method('handle')
             ->with($this->request)
-            ->willReturn((string) $validToken);
-        $this
-            ->request
-            ->expects(self::any())
-            ->method('getAttribute')
-            ->with($this->sessionAttribute)
-            ->willReturn($this->session);
+            ->willReturn($this->response);
 
-        self::assertSame(
-            $this->response,
-            $this->middleware->__invoke($this->request, $this->response)
-        );
+        self::assertSame($this->response, $this->middleware->process($this->request, $this->nextMiddleware));
     }
 
     public function testWillSucceedIfANonSafeRequestIsProvidedWithAValidTokenWithNextMiddleware()
@@ -175,8 +152,8 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         $this
             ->nextMiddleware
             ->expects(self::once())
-            ->method('__invoke')
-            ->with($this->request, $this->response)
+            ->method('handle')
+            ->with($this->request)
             ->willReturn($nextReturnValue);
         $this->isSafeHttpRequest->expects(self::any())->method('__invoke')->with($this->request)->willReturn(false);
         $this
@@ -200,7 +177,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
 
         self::assertSame(
             $nextReturnValue,
-            $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware)
+            $this->middleware->process($this->request, $this->nextMiddleware)
         );
     }
 
@@ -231,7 +208,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->with($this->sessionAttribute)
             ->willReturn($this->session);
 
-        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+        $this->assertFaultyResponse();
     }
 
     public function testUnsignedTokensAreRejected()
@@ -259,7 +236,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->with($this->sessionAttribute)
             ->willReturn($this->session);
 
-        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+        $this->assertFaultyResponse();
     }
 
     public function testExpiredSignedTokensAreRejected()
@@ -290,7 +267,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->with($this->sessionAttribute)
             ->willReturn($this->session);
 
-        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+        $this->assertFaultyResponse();
     }
 
     public function testMalformedTokensShouldBeRejected()
@@ -315,7 +292,7 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             ->with($this->sessionAttribute)
             ->willReturn($this->session);
 
-        $this->assertFaultyResponse($this->middleware, $this->request, $this->response);
+        $this->assertFaultyResponse();
     }
 
     public function testWillFailIfARequestDoesNotIncludeASession()
@@ -341,28 +318,13 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
 
         $this->expectException(SessionAttributeNotFoundException::class);
 
-        $this->middleware->__invoke($this->request, $this->response, $this->nextMiddleware);
+        $this->middleware->process($this->request, $this->nextMiddleware);
     }
 
-    /**
-     * @param CSRFCheckerMiddleware                                      $middleware
-     * @param ServerRequestInterface                                     $request
-     * @param ResponseInterface|\PHPUnit_Framework_MockObject_MockObject $response
-     *
-     * @return void
-     */
-    private function assertFaultyResponse(
-        CSRFCheckerMiddleware $middleware,
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ) {
-        $faultyResponse = $this->getMock(ResponseInterface::class);
-        $responseBody   = $this->getMock(StreamInterface::class);
+    private function assertFaultyResponse() : void
+    {
+        $this->nextMiddleware->expects(self::never())->method('handle');
 
-        $response->expects(self::any())->method('withStatus')->with(400)->willReturn($faultyResponse);
-        $faultyResponse->expects(self::any())->method('getBody')->willReturn($responseBody);
-        $responseBody->expects(self::once())->method('write')->with('{"error":"missing or invalid CSRF token"}');
-
-        self::assertSame($faultyResponse, $middleware->__invoke($request, $response));
+        self::assertSame($this->faultyResponse, $this->middleware->process($this->request, $this->nextMiddleware));
     }
 }
