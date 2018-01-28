@@ -53,7 +53,7 @@ final class CSRFCheckerMiddleware implements \Psr\Http\Server\MiddlewareInterfac
     /**
      * @var ResponseInterface
      */
-    private $faultyResponseTemplate;
+    private $faultyResponse;
 
     public function __construct(
         IsSafeHttpRequestInterface $isSafeHttpRequest,
@@ -62,7 +62,7 @@ final class CSRFCheckerMiddleware implements \Psr\Http\Server\MiddlewareInterfac
         Parser $tokenParser,
         Signer $signer,
         string $sessionAttribute,
-        ResponseInterface $faultyResponseTemplate
+        ResponseInterface $faultyResponse
     ) {
         $this->isSafeHttpRequest           = $isSafeHttpRequest;
         $this->extractUniqueKeyFromSession = $extractUniqueKeyFromSession;
@@ -70,7 +70,7 @@ final class CSRFCheckerMiddleware implements \Psr\Http\Server\MiddlewareInterfac
         $this->tokenParser                 = $tokenParser;
         $this->signer                      = $signer;
         $this->sessionAttribute            = $sessionAttribute;
-        $this->faultyResponseTemplate      = $faultyResponseTemplate;
+        $this->faultyResponse              = $faultyResponse;
     }
 
     public function process(
@@ -93,12 +93,12 @@ final class CSRFCheckerMiddleware implements \Psr\Http\Server\MiddlewareInterfac
                 return $handler->handle($request);
             }
         } catch (BadMethodCallException $invalidToken) {
-            return $this->buildFaultyResponse();
+            return $this->faultyResponse;
         } catch (InvalidArgumentException $invalidToken) {
-            return $this->buildFaultyResponse();
+            return $this->faultyResponse;
         }
 
-        return $this->buildFaultyResponse();
+        return $this->faultyResponse;
     }
 
     private function getSession(ServerRequestInterface $request) : SessionInterface
@@ -110,18 +110,5 @@ final class CSRFCheckerMiddleware implements \Psr\Http\Server\MiddlewareInterfac
         }
 
         return $session;
-    }
-
-    /**
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
-     */
-    private function buildFaultyResponse() : ResponseInterface
-    {
-        $faultyResponse = $this->faultyResponseTemplate->withStatus(401);
-
-        $faultyResponse->getBody()->write('{"error":"missing or invalid CSRF token"}');
-
-        return $faultyResponse;
     }
 }

@@ -82,11 +82,6 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
     /**
      * @var ResponseInterface
      */
-    private $faultyResponseTemplate;
-
-    /**
-     * @var ResponseInterface
-     */
     private $faultyResponse;
 
     /**
@@ -106,7 +101,6 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
         $this->session                     = $this->getMock(SessionInterface::class);
         $this->sessionAttribute            = uniqid('session', true);
         $this->nextMiddleware              = $this->getMock(RequestHandlerInterface::class);
-        $this->faultyResponseTemplate      = $this->getMock(ResponseInterface::class);
         $this->faultyResponse              = $this->getMock(ResponseInterface::class);
         $this->middleware                  = new CSRFCheckerMiddleware(
             $this->isSafeHttpRequest,
@@ -115,15 +109,8 @@ final class CSRFCheckerMiddlewareTest extends PHPUnit_Framework_TestCase
             $this->tokenParser,
             $this->signer,
             $this->sessionAttribute,
-            $this->faultyResponseTemplate
+            $this->faultyResponse
         );
-
-        $this
-            ->faultyResponseTemplate
-            ->expects(self::any())
-            ->method('withStatus')
-            ->with(401)
-            ->willReturn($this->faultyResponse);
     }
 
     public function testWillIgnoreSafeRequestsWithNoNextMiddleware()
