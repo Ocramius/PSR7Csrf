@@ -14,7 +14,6 @@ script:
   - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then PHPUNIT_FLAGS="--coverage-clover ./clover.xml"; else PHPUNIT_FLAGS=""; fi
   - ./vendor/bin/phpunit $PHPUNIT_FLAGS
   - ./vendor/bin/phpcs
-  - ./humbug/bin/humbug
   - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then ./vendor/bin/humbug; fi
   - cd examples
   - composer install
