@@ -14,7 +14,7 @@ script:
   - ./vendor/bin/phpunit --disallow-test-output --report-useless-tests --coverage-clover ./clover.xml
   - ./vendor/bin/phpcs
   - ./humbug/bin/humbug
-  - ./build/check-humbug-mutators.php
+  - if php -i |grep -qE xdebug; then ./vendor/bin/humbug; fi
   - cd examples
   - composer install
   - php index.php > /dev/null
