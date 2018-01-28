@@ -10,6 +10,7 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Psr\Http\Message\ResponseInterface;
 use PSR7Csrf\Factory;
 use PSR7Session\Http\SessionMiddleware;
+use Zend\Diactoros\Response\JsonResponse;
 use Zend\Expressive\Application;
 use Zend\Expressive\Router\FastRouteRouter;
 
@@ -29,7 +30,9 @@ $app->pipe(new SessionMiddleware(
     new Parser(),
     1200
 ));
-$app->pipe(Factory::createDefaultCSRFCheckerMiddleware());
+$app->pipe(Factory::createDefaultCSRFCheckerMiddleware(
+    (new JsonResponse(['error' => 'CSRF validation failed']))->withStatus(401)
+));
 $app->pipeDispatchMiddleware();
 
 $tokenGenerator = Factory::createDefaultTokenGenerator();
@@ -39,10 +42,13 @@ $app->get('/', function ($request, ResponseInterface $response) use ($tokenGener
         ->getBody()
         ->write(
             '<form method="post" action="/post">'
-            . '<input type="submit"/>'
+            . '<input type="submit" value="Submit with CSRF token"/>'
             . '<input type="hidden" name="csrf_token" value="'
             . $tokenGenerator($request)
             . '"/>'
+            . '</form>'
+            . '<form method="post" action="/post">'
+            . '<input type="submit" value="Submit without CSRF token"/>'
             . '</form>'
         );
 
