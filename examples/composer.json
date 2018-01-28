@@ -1,8 +1,11 @@
 {
     "require": {
-        "ocramius/psr7-csrf": "*@DEV",
-        "ocramius/psr7-session": "^1.0",
         "zendframework/zend-expressive": "^1.0",
         "zendframework/zend-expressive-fastroute": "^1.0"
+    },
+    "autoload": {
+        "files": [
+            "../vendor/autoload.php"
+        ]
     }
 }
