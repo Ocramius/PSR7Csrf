@@ -10,7 +10,6 @@ use Lcobucci\JWT\Signer;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use PSR7Csrf\CSRFCheckerMiddleware;
 use PSR7Csrf\Exception\SessionAttributeNotFoundException;
