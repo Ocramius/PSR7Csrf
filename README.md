@@ -10,6 +10,18 @@
 [middleware](https://mwop.net/blog/2015-01-08-on-http-middleware-and-psr-7.html) that enables
 [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) protection for PSR-7 based applications.
 
+# DEPRECATED in favor of `psr7-sessions/storageless` 5.0.0+
+
+Please note that this package is **DEPRECATED**.
+
+Since [`psr7-sessions/storageless` 5.0.0](https://github.com/psr7-sessions/storageless/releases/tag/5.0.0),
+the generated cookies are CSRF-resistant by default for unsafe HTTP methods (`POST`/`PUT`/`DELETE`/`PATCH`/etc.),
+so the usage of this package is no longer needed.
+You can still install `ocramius/psr7-csrf`, but since there is no practical need for it,
+it is not necessary to do so.
+
+### What is this about?
+
 Instead of storing tokens in the session, PSR7Csrf simply uses JWT tokens,
 which can be verified, signed and have a specific lifetime on their own.
 
